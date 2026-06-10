@@ -1,0 +1,11 @@
+# Foldery kompilacji i pliki binarne
+build/
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Makefile
+cmake_install.cmake
+compile_commands.json
+
+# Zależności pobierane przez CMake (np. FTXUI)
+_deps/
