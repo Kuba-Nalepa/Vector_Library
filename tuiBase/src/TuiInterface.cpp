@@ -205,7 +205,7 @@ void TuiInterface::render()
                     text(" " + s.department) | size(WIDTH, EQUAL, 12),
                     text(" " + s.fieldOfStudy) | size(WIDTH, EQUAL, 25),
                     text(" " + std::to_string(s.currentYear)) | size(WIDTH, EQUAL, 8),
-                    text(" " + std::to_string(s.gpa).substr(0, 4)) | color(Color::Green)
+                    text(" " + std::to_string(s.gradesAvg).substr(0, 4)) | color(Color::Green)
                 }));
             }
         }
