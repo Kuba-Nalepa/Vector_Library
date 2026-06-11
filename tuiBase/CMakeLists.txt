@@ -8,9 +8,14 @@ FetchContent_Declare(ftxui
 )
 FetchContent_MakeAvailable(ftxui)
 
-add_executable(tuiBase src/main.cpp
-src/TuiInterface.cpp)
-
+add_executable(tuiBase 
+    src/app/main.cpp
+    tuiInterface/TuiInterface.cpp
+)
+target_include_directories(tuiBase PRIVATE 
+    src 
+    tuiInterface
+)
 target_link_libraries(tuiBase PRIVATE
     ftxui::component
     ftxui::dom
