@@ -29,8 +29,8 @@ private:
 
     int selectedMenuEntry = 0;
     int currentScreen = 0;
-    void showSubScreen(const std::string& optionName);
-    ftxui::Element renderSubScreen(const std::string& optionName);
+    void showSubScreen(const std::string &optionName);
+    ftxui::Element renderSubScreen(const std::string &optionName);
 
     SmartArray<Student> m_database;
 };
