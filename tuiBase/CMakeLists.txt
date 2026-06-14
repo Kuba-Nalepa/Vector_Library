@@ -13,8 +13,8 @@ add_executable(tuiBase
     tuiInterface/TuiInterface.cpp
 )
 target_include_directories(tuiBase PRIVATE 
-    src 
-    tuiInterface
+    ${CMAKE_CURRENT_SOURCE_DIR}/tuiInterface
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/smartArray
 )
 target_link_libraries(tuiBase PRIVATE
     ftxui::component
