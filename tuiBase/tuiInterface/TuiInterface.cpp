@@ -39,7 +39,7 @@ void TuiInterface::render()
     auto elementsNavigation = Container::Vertical({menu});
 
     auto rend = Renderer(elementsNavigation, [&]
-                         { return vbox({text("SYSTEM ZARZĄDZANIA STUDENTAMI") | center | bold | color(Color::Cyan),
+                         { return vbox({text("PROJEKT C++") | center | bold | color(Color::Cyan),
                                         separator(),
                                         menu->Render()}) |
                                   border; });
@@ -267,7 +267,7 @@ void TuiInterface::showSubScreen(const std::string &optionName)
                                      std::ifstream file("students.txt", std::ios::in);
                                      if (file.is_open())
                                      {
-                                         m_database = SmartArray<Student>();
+                                         m_database.clear();
                                          std::string line;
                                          while (std::getline(file, line))
                                          {
@@ -366,7 +366,7 @@ void TuiInterface::showSubScreen(const std::string &optionName)
                                  {
                                      for (unsigned i = 0; i < m_database.size(); ++i)
                                      {
-                                         Student s = m_database.at(i);
+                                         const Student &s = m_database.at(i);
                                          lines.push_back(text("[" + std::to_string(i) + "] " + s.firstName + " " + s.lastName +
                                                               " | kierunek: " + s.department +
                                                               " | rok: " + std::to_string(s.currentYear) +
