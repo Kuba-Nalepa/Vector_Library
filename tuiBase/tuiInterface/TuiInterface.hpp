@@ -10,8 +10,8 @@ struct Student
 {
     std::string firstName;
     std::string lastName;
-    std::string department;
     std::string fieldOfStudy;
+    std::string specialization;
     int currentYear;
     double gradesAvg;
 };
@@ -31,8 +31,7 @@ private:
     int currentScreen = 0;
     void showSubScreen(const std::string &optionName);
     ftxui::Element renderSubScreen(const std::string &optionName);
-
-    SmartArray<Student> m_database;
+    SmartArray<Student> studentsDatabase;
 };
 
 #endif

@@ -66,15 +66,15 @@ void TuiInterface::showSubScreen(const std::string &optionName)
     {
         std::string firstName;
         std::string lastName;
-        std::string department;
+        std::string specialization;
         std::string fieldOfStudy;
         std::string yearInput;
         std::string gradeInput;
 
         auto inputFirstName = Input(&firstName, "Imię");
         auto inputLastName = Input(&lastName, "Nazwisko");
-        auto inputDepartment = Input(&department, "Kierunek");
-        auto inputFieldOfStudy = Input(&fieldOfStudy, "Specjalność");
+        auto inputSpecialization = Input(&specialization, "Specjalność");
+        auto inputFieldOfStudy = Input(&fieldOfStudy, "Kierunek");
         auto inputYear = Input(&yearInput, "Rok studiów");
         auto inputGrade = Input(&gradeInput, "Średnia ocen");
         auto saveButton = Button("Dodaj", [&]
@@ -82,23 +82,23 @@ void TuiInterface::showSubScreen(const std::string &optionName)
             Student student;
             student.firstName = firstName;
             student.lastName = lastName;
-            student.department = department;
+            student.specialization = specialization;
             student.fieldOfStudy = fieldOfStudy;
             student.currentYear = std::stoi(yearInput.empty() ? "0" : yearInput);
             student.gradesAvg = std::stod(gradeInput.empty() ? "0" : gradeInput);
-            m_database.pushBack(student);
+            studentsDatabase.pushBack(student);
             screen.ExitLoopClosure()(); });
         auto backButton = Button("Powrót", screen.ExitLoopClosure());
 
-        auto container = Container::Vertical({inputFirstName, inputLastName, inputDepartment, inputFieldOfStudy, inputYear, inputGrade, saveButton, backButton});
+        auto container = Container::Vertical({inputFirstName, inputLastName, inputSpecialization, inputFieldOfStudy, inputYear, inputGrade, saveButton, backButton});
         auto rend = Renderer(container, [&]
                              { return vbox({
                                           text("Dodawanie studenta") | bold | color(Color::Cyan),
                                           separator(),
                                           hbox(text("Imię:            ") | color(Color::White), inputFirstName->Render()),
                                           hbox(text("Nazwisko:        ") | color(Color::White), inputLastName->Render()),
-                                          hbox(text("Kierunek:        ") | color(Color::White), inputDepartment->Render()),
-                                          hbox(text("Specjalność:     ") | color(Color::White), inputFieldOfStudy->Render()),
+                                          hbox(text("Specjalność:     ") | color(Color::White), inputSpecialization->Render()),
+                                          hbox(text("Kierunek:        ") | color(Color::White), inputFieldOfStudy->Render()),
                                           hbox(text("Rok studiów:     ") | color(Color::White), inputYear->Render()),
                                           hbox(text("Średnia ocen:    ") | color(Color::White), inputGrade->Render()),
                                           separator(),
@@ -119,13 +119,14 @@ void TuiInterface::showSubScreen(const std::string &optionName)
                                        try
                                        {
                                            unsigned index = static_cast<unsigned>(std::stoi(indexInput));
-                                           if (index < m_database.size())
+                                           if (index < studentsDatabase.size())
                                            {
-                                               m_database.erase(index);
+                                               studentsDatabase.erase(index);
                                            }
                                        }
-                                       catch (...)
+                                       catch (const std::exception &e)
                                        {
+                                           throw std::invalid_argument("Nieprawidłowy indeks studenta.");
                                        }
                                        screen.ExitLoopClosure()(); });
         auto backButton = Button("Powrót", screen.ExitLoopClosure());
@@ -148,7 +149,7 @@ void TuiInterface::showSubScreen(const std::string &optionName)
 
     if (optionName == "Edytuj studenta")
     {
-        if (m_database.size() == 0)
+        if (studentsDatabase.size() == 0)
         {
             auto backButton = Button("Powrót", screen.ExitLoopClosure());
             auto container = Container::Vertical({backButton});
@@ -164,7 +165,7 @@ void TuiInterface::showSubScreen(const std::string &optionName)
         std::string indexInput;
         std::string firstName;
         std::string lastName;
-        std::string department;
+        std::string specialization;
         std::string fieldOfStudy;
         std::string yearInput;
         std::string gradeInput;
@@ -177,37 +178,38 @@ void TuiInterface::showSubScreen(const std::string &optionName)
                                      try
                                      {
                                          unsigned index = static_cast<unsigned>(std::stoi(indexInput));
-                                         if (index < m_database.size())
+                                         if (index < studentsDatabase.size())
                                          {
-                                             const Student &s = m_database.at(index);
-                                             firstName = s.firstName;
-                                             lastName = s.lastName;
-                                             department = s.department;
-                                             fieldOfStudy = s.fieldOfStudy;
-                                             yearInput = std::to_string(s.currentYear);
-                                             gradeInput = std::to_string(s.gradesAvg);
+                                             const Student &student = studentsDatabase.at(index);
+                                             firstName = student.firstName;
+                                             lastName = student.lastName;
+                                             specialization = student.specialization;
+                                             fieldOfStudy = student.fieldOfStudy;
+                                             yearInput = std::to_string(student.currentYear);
+                                             gradeInput = std::to_string(student.gradesAvg);
                                              selectedStudent = static_cast<int>(index);
                                          }
                                      }
-                                     catch (...)
+                                     catch (const std::exception &e)
                                      {
+                                         throw std::invalid_argument("Nieprawidłowy indeks studenta.");
                                      } });
 
         auto inputFirstName = Input(&firstName, "Imię");
         auto inputLastName = Input(&lastName, "Nazwisko");
-        auto inputDepartment = Input(&department, "Kierunek");
+        auto inputSpecialization = Input(&specialization, "Kierunek");
         auto inputFieldOfStudy = Input(&fieldOfStudy, "Specjalność");
         auto inputYear = Input(&yearInput, "Rok studiów");
         auto inputGrade = Input(&gradeInput, "Średnia ocen");
 
         auto saveButton = Button("Zapisz zmiany", [&]
                                  {
-                                     if (selectedStudent >= 0 && static_cast<unsigned>(selectedStudent) < m_database.size())
+                                     if (selectedStudent >= 0 && static_cast<unsigned>(selectedStudent) < studentsDatabase.size())
                                      {
-                                         Student &student = m_database[selectedStudent];
+                                         Student &student = studentsDatabase[selectedStudent];
                                          student.firstName = firstName;
                                          student.lastName = lastName;
-                                         student.department = department;
+                                         student.specialization = specialization;
                                          student.fieldOfStudy = fieldOfStudy;
                                          student.currentYear = std::stoi(yearInput.empty() ? "0" : yearInput);
                                          student.gradesAvg = std::stod(gradeInput.empty() ? "0" : gradeInput);
@@ -215,7 +217,7 @@ void TuiInterface::showSubScreen(const std::string &optionName)
                                      screen.ExitLoopClosure()(); });
         auto backButton = Button("Powrót", screen.ExitLoopClosure());
 
-        auto container = Container::Vertical({inputIndex, loadButton, inputFirstName, inputLastName, inputDepartment, inputFieldOfStudy, inputYear, inputGrade, saveButton, backButton});
+        auto container = Container::Vertical({inputIndex, loadButton, inputFirstName, inputLastName, inputSpecialization, inputFieldOfStudy, inputYear, inputGrade, saveButton, backButton});
         auto rend = Renderer(container, [&]
                              { return vbox({
                                           text("Edycja studenta") | bold | color(Color::Yellow),
@@ -226,8 +228,8 @@ void TuiInterface::showSubScreen(const std::string &optionName)
                                           separator(),
                                           hbox(text("Imię:            ") | color(Color::White), inputFirstName->Render()),
                                           hbox(text("Nazwisko:        ") | color(Color::White), inputLastName->Render()),
-                                          hbox(text("Kierunek:        ") | color(Color::White), inputDepartment->Render()),
-                                          hbox(text("Specjalność:     ") | color(Color::White), inputFieldOfStudy->Render()),
+                                          hbox(text("Specjalizacja:   ") | color(Color::White), inputSpecialization->Render()),
+                                          hbox(text("Kierunek:     ") | color(Color::White), inputFieldOfStudy->Render()),
                                           hbox(text("Rok studiów:     ") | color(Color::White), inputYear->Render()),
                                           hbox(text("Średnia ocen:    ") | color(Color::White), inputGrade->Render()),
                                           separator(),
@@ -246,7 +248,7 @@ void TuiInterface::showSubScreen(const std::string &optionName)
 
         auto rend = Renderer(container, [&]
                              {
-                                 const unsigned count = m_database.size();
+                                 const unsigned count = studentsDatabase.size();
                                  return vbox({
                                             text("Liczba studentów") | bold | color(Color::Cyan),
                                             separator(),
@@ -264,48 +266,59 @@ void TuiInterface::showSubScreen(const std::string &optionName)
     {
         auto loadButton = Button("Wczytaj teraz", [&]
                                  {
-                                     std::ifstream file("students.txt", std::ios::in);
-                                     if (file.is_open())
-                                     {
-                                         m_database.clear();
-                                         std::string line;
-                                         while (std::getline(file, line))
-                                         {
-                                             std::stringstream ss(line);
-                                             std::string token;
-                                             std::vector<std::string> values;
-                                             while (std::getline(ss, token, ','))
-                                             {
-                                                 values.push_back(token);
-                                             }
+        std::ifstream file("students.bin", std::ios::binary);
 
-                                             if (values.size() == 6)
-                                             {
-                                                 Student student;
-                                                 student.firstName = values[0];
-                                                 student.lastName = values[1];
-                                                 student.department = values[2];
-                                                 student.fieldOfStudy = values[3];
-                                                 student.currentYear = std::stoi(values[4]);
-                                                 student.gradesAvg = std::stod(values[5]);
-                                                 m_database.pushBack(student);
-                                             }
-                                         }
-                                         file.close();
-                                     }
-                                     screen.ExitLoopClosure()(); });
+        if (file.is_open())
+        {
+            studentsDatabase.clear();
+
+            while (file.peek() != EOF)
+            {
+                Student student;
+
+                auto readString = [&](std::string& str)
+                {
+                    size_t len;
+                    file.read(reinterpret_cast<char*>(&len), sizeof(len));
+
+                    if (!file)
+                        return;
+
+                    str.resize(len);
+                    file.read(&str[0], len);
+                };
+
+                readString(student.firstName);
+                if (!file) break;
+
+                readString(student.lastName);
+                readString(student.specialization);
+                readString(student.fieldOfStudy);
+
+                file.read(reinterpret_cast<char*>(&student.currentYear),
+                          sizeof(student.currentYear));
+
+                file.read(reinterpret_cast<char*>(&student.gradesAvg),
+                          sizeof(student.gradesAvg));
+
+                if (file)
+                    studentsDatabase.pushBack(student);
+            }
+
+            file.close();
+        }
+
+        screen.ExitLoopClosure()(); });
+
         auto backButton = Button("Powrót", screen.ExitLoopClosure());
 
         auto container = Container::Vertical({loadButton, backButton});
+
         auto rend = Renderer(container, [&]
-                             { return vbox({
-                                          text("Wczytaj z pliku") | bold | color(Color::Cyan),
-                                          separator(),
-                                          text("Czy chcesz wczytać?"),
-                                          separator(),
-                                          loadButton->Render() | center,
-                                          backButton->Render() | center,
-                                      }) |
+                             { return vbox({text("Wczytaj z pliku") | bold,
+                                            separator(),
+                                            loadButton->Render(),
+                                            backButton->Render()}) |
                                       border; });
 
         screen.Loop(rend);
@@ -316,35 +329,63 @@ void TuiInterface::showSubScreen(const std::string &optionName)
     {
         auto saveButton = Button("Zapisz teraz", [&]
                                  {
-                                     std::ofstream file("students.txt", std::ios::out | std::ios::trunc);
-                                     if (file.is_open())
-                                     {
-                                         for (unsigned i = 0; i < m_database.size(); ++i)
-                                         {
-                                             const Student &s = m_database.at(i);
-                                             file << s.firstName << ","
-                                                  << s.lastName << ","
-                                                  << s.department << ","
-                                                  << s.fieldOfStudy << ","
-                                                  << s.currentYear << ","
-                                                  << s.gradesAvg << "\n";
-                                         }
-                                         file.close();
-                                     }
-                                     screen.ExitLoopClosure()(); });
+        std::ofstream file(
+            "students.bin",
+            std::ios::binary | std::ios::trunc);
+
+        if (file.is_open())
+        {
+            auto writeString =
+                [&](const std::string& str)
+            {
+                size_t len = str.size();
+
+                file.write(
+                    reinterpret_cast<const char*>(&len),
+                    sizeof(len));
+
+                file.write(
+                    str.c_str(),
+                    len);
+            };
+
+            for (unsigned i = 0; i < studentsDatabase.size(); ++i)
+            {
+                const Student& student =
+                    studentsDatabase.at(i);
+
+                writeString(student.firstName);
+                writeString(student.lastName);
+                writeString(student.specialization);
+                writeString(student.fieldOfStudy);
+
+                file.write(
+                    reinterpret_cast<const char*>(&student.currentYear),
+                    sizeof(student.currentYear));
+
+                file.write(
+                    reinterpret_cast<const char*>(&student.gradesAvg),
+                    sizeof(student.gradesAvg));
+            }
+
+            file.close();
+        }
+
+        screen.ExitLoopClosure()(); });
+
         auto backButton = Button("Powrót", screen.ExitLoopClosure());
 
-        auto container = Container::Vertical({saveButton, backButton});
-        auto rend = Renderer(container, [&]
-                             { return vbox({
-                                          text("Zapisz do pliku") | bold | color(Color::Green),
-                                          separator(),
-                                          text("Czy chcesz zapisać?"),
-                                          separator(),
-                                          saveButton->Render() | center,
-                                          backButton->Render() | center,
-                                      }) |
-                                      border; });
+        auto container =
+            Container::Vertical(
+                {saveButton, backButton});
+
+        auto rend =
+            Renderer(container, [&]
+                     { return vbox({text("Zapisz do pliku BIN") | bold,
+                                    separator(),
+                                    saveButton->Render(),
+                                    backButton->Render()}) |
+                              border; });
 
         screen.Loop(rend);
         return;
@@ -358,19 +399,19 @@ void TuiInterface::showSubScreen(const std::string &optionName)
         auto rend = Renderer(container, [&]
                              {
                                  Elements lines;
-                                 if (m_database.size() == 0)
+                                 if (studentsDatabase.size() == 0)
                                  {
                                      lines.push_back(text("Brak studentów w bazie.") | color(Color::Yellow));
                                  }
                                  else
                                  {
-                                     for (unsigned i = 0; i < m_database.size(); ++i)
+                                     for (unsigned i = 0; i < studentsDatabase.size(); ++i)
                                      {
-                                         const Student &s = m_database.at(i);
-                                         lines.push_back(text("[" + std::to_string(i) + "] " + s.firstName + " " + s.lastName +
-                                                              " | kierunek: " + s.department +
-                                                              " | rok: " + std::to_string(s.currentYear) +
-                                                              " | średnia: " + std::to_string(s.gradesAvg)) | color(Color::White));
+                                         const Student &student = studentsDatabase.at(i);
+                                         lines.push_back(text("[" + std::to_string(i) + "] " + student.firstName + " " + student.lastName +
+                                                              " | kierunek: " + student.specialization +
+                                                              " | rok: " + std::to_string(student.currentYear) +
+                                                              " | średnia: " + std::to_string(student.gradesAvg)) | color(Color::White));
                                      }
                                  }
 
