@@ -264,7 +264,7 @@ void TuiInterface::showSubScreen(const std::string &optionName)
 
     if (optionName == "Wczytaj z pliku")
     {
-        auto loadButton = Button("Wczytaj teraz", [&]
+        auto loadButton = Button("Wczytaj plik", [&]
                                  {
         std::ifstream file("students.bin", std::ios::binary);
 
@@ -327,7 +327,7 @@ void TuiInterface::showSubScreen(const std::string &optionName)
 
     if (optionName == "Zapisz do pliku")
     {
-        auto saveButton = Button("Zapisz teraz", [&]
+        auto saveButton = Button("Zapisz plik", [&]
                                  {
         std::ofstream file(
             "students.bin",
@@ -349,7 +349,7 @@ void TuiInterface::showSubScreen(const std::string &optionName)
                     len);
             };
 
-            for (unsigned i = 0; i < studentsDatabase.size(); ++i)
+            for (unsigned i = 0; i < studentsDatabase.size(); i++)
             {
                 const Student& student =
                     studentsDatabase.at(i);
@@ -405,7 +405,7 @@ void TuiInterface::showSubScreen(const std::string &optionName)
                                  }
                                  else
                                  {
-                                     for (unsigned i = 0; i < studentsDatabase.size(); ++i)
+                                     for (unsigned i = 0; i < studentsDatabase.size(); i++)
                                      {
                                          const Student &student = studentsDatabase.at(i);
                                          lines.push_back(text("[" + std::to_string(i) + "] " + student.firstName + " " + student.lastName +
